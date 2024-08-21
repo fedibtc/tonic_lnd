@@ -12,6 +12,9 @@ categories = ["api-bindings", "asynchronous", "cryptography::cryptocurrencies", 
 license = "MITNFA"
 
 [features]
+autopilotrpc = []
+chainrpc = []
+devrpc = []
 lightningrpc = []
 signrpc = []
 walletrpc = ["signrpc"]
@@ -20,7 +23,9 @@ versionrpc = []
 routerrpc = ["lightningrpc"]
 invoicesrpc = ["lightningrpc"]
 staterpc = ["lightningrpc"]
-all = ["lightningrpc", "walletrpc", "peersrpc", "versionrpc", "routerrpc", "invoicesrpc", "staterpc"]
+watchtowerrpc = []
+wtclientrpc = []
+all = ["autopilotrpc", "chainrpc", "devrpc", "invoicesrpc", "lightningrpc", "walletrpc", "peersrpc","routerrpc", "signrpc", "versionrpc", "watchtowerrpc", "wtclientrpc"]
 default = ["all"]
 
 [dependencies]

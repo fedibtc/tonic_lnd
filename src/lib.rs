@@ -17,6 +17,22 @@ type Service = InterceptedService<
     MacaroonInterceptor,
 >;
 
+/// Convenience type alias for autopilot client.
+#[cfg(feature = "autopilotrpc")]
+pub type AutopilotClient = autopilotrpc::autopilot_client::AutopilotClient<Service>;
+
+/// Convenience type alias for chain kit client.
+#[cfg(feature = "chainrpc")]
+pub type ChainKitClient = chainrpc::chain_kit_client::ChainKitClient<Service>;
+
+/// Convenience type alias for chain notifier client.
+#[cfg(feature = "chainrpc")]
+pub type ChainNotifierClient = chainrpc::chain_notifier_client::ChainNotifierClient<Service>;
+
+/// Convenience type alias for dev client.
+#[cfg(feature = "devrpc")]
+pub type DevClient = devrpc::dev_client::DevClient<Service>;
+
 /// Convenience type alias for lightning client.
 #[cfg(feature = "lightningrpc")]
 pub type LightningClient = lnrpc::lightning_client::LightningClient<Service>;
@@ -28,10 +44,6 @@ pub type WalletKitClient = walletrpc::wallet_kit_client::WalletKitClient<Service
 /// Convenience type alias for peers service client.
 #[cfg(feature = "peersrpc")]
 pub type PeersClient = peersrpc::peers_client::PeersClient<Service>;
-
-/// Convenience type alias for versioner service client.
-#[cfg(feature = "versionrpc")]
-pub type VersionerClient = verrpc::versioner_client::VersionerClient<Service>;
 
 /// Convenience type alias for signer client.
 #[cfg(feature = "signrpc")]
@@ -45,15 +57,32 @@ pub type RouterClient = routerrpc::router_client::RouterClient<Service>;
 #[cfg(feature = "invoicesrpc")]
 pub type InvoicesClient = invoicesrpc::invoices_client::InvoicesClient<Service>;
 
-/// Convenience type alias for state service client.
-#[cfg(feature = "staterpc")]
-pub type StateClient = staterpc::state_client::StateClient<Service>;
+/// Convenience type alias for versioner service client.
+#[cfg(feature = "versionrpc")]
+pub type VersionerClient = verrpc::versioner_client::VersionerClient<Service>;
+
+/// Convenience type alias for watchtower service client.
+#[cfg(feature = "watchtowerrpc")]
+pub type WatchtowerClient = watchtowerrpc::watchtower_client::WatchtowerClient<Service>;
+
+/// Convenience type alias for watchtower service client.
+#[cfg(feature = "wtclientrpc")]
+pub type WatchtowerClientClient =
+    wtclientrpc::watchtower_client_client::WatchtowerClientClient<Service>;
 
 /// The client returned by `connect` function
 ///
 /// This is a convenience type which you most likely want to use instead of raw client.
 #[derive(Clone)]
 pub struct Client {
+    #[cfg(feature = "autopilotrpc")]
+    autopilot: AutopilotClient,
+    #[cfg(feature = "chainrpc")]
+    chain_kit: ChainKitClient,
+    #[cfg(feature = "chainrpc")]
+    chain_notifier: ChainNotifierClient,
+    #[cfg(feature = "devrpc")]
+    dev: DevClient,
     #[cfg(feature = "lightningrpc")]
     lightning: LightningClient,
     #[cfg(feature = "walletrpc")]
@@ -68,11 +97,37 @@ pub struct Client {
     router: RouterClient,
     #[cfg(feature = "invoicesrpc")]
     invoices: InvoicesClient,
-    #[cfg(feature = "staterpc")]
-    state: StateClient,
+    #[cfg(feature = "watchtowerrpc")]
+    watchtower: WatchtowerClient,
+    #[cfg(feature = "wtclientrpc")]
+    wtclient: WatchtowerClientClient,
 }
 
 impl Client {
+    /// Returns the autopilot client.
+    #[cfg(feature = "autopilotrpc")]
+    pub fn autopilot(&mut self) -> &mut AutopilotClient {
+        &mut self.autopilot
+    }
+
+    /// Returns the chainkit client.
+    #[cfg(feature = "chainrpc")]
+    pub fn chain_kit(&mut self) -> &mut ChainKitClient {
+        &mut self.chain_kit
+    }
+
+    /// Returns the chain notifier client.
+    #[cfg(feature = "chainrpc")]
+    pub fn chain_notifier(&mut self) -> &mut ChainNotifierClient {
+        &mut self.chain_notifier
+    }
+
+    /// Returns the dev client.
+    #[cfg(feature = "devrpc")]
+    pub fn dev(&mut self) -> &mut DevClient {
+        &mut self.dev
+    }
+
     /// Returns the lightning client.
     #[cfg(feature = "lightningrpc")]
     pub fn lightning(&mut self) -> &mut LightningClient {
@@ -115,10 +170,16 @@ impl Client {
         &mut self.invoices
     }
 
-    /// Returns the state service client.
-    #[cfg(feature = "staterpc")]
-    pub fn state(&mut self) -> &mut StateClient {
-        &mut self.state
+    /// Returns the watch tower client.
+    #[cfg(feature = "watchtowerrpc")]
+    pub fn watchtowerrpc(&mut self) -> &mut WatchtowerClient {
+        &mut self.watchtower
+    }
+
+    /// Returns the wt client.
+    #[cfg(feature = "wtclientrpc")]
+    pub fn wtclientrpc(&mut self) -> &mut WatchtowerClientClient {
+        &mut self.wtclient
     }
 }
 
@@ -134,6 +195,26 @@ macro_rules! try_map_err {
             Err(error) => return Err($mapfn(error).into()),
         }
     };
+}
+
+#[cfg(feature = "autopilotrpc")]
+pub mod autopilotrpc {
+    tonic::include_proto!("autopilotrpc");
+}
+
+#[cfg(feature = "chainrpc")]
+pub mod chainrpc {
+    tonic::include_proto!("chainrpc");
+}
+
+#[cfg(feature = "devrpc")]
+pub mod devrpc {
+    tonic::include_proto!("devrpc");
+}
+
+#[cfg(feature = "invoicesrpc")]
+pub mod invoicesrpc {
+    tonic::include_proto!("invoicesrpc");
 }
 
 /// Messages and other types generated by `tonic`/`prost`
@@ -170,14 +251,14 @@ pub mod verrpc {
     tonic::include_proto!("verrpc");
 }
 
-#[cfg(feature = "invoicesrpc")]
-pub mod invoicesrpc {
-    tonic::include_proto!("invoicesrpc");
+#[cfg(feature = "watchtowerrpc")]
+pub mod watchtowerrpc {
+    tonic::include_proto!("watchtowerrpc");
 }
 
-#[cfg(feature = "staterpc")]
-pub mod staterpc {
-    tonic::include_proto!("staterpc");
+#[cfg(feature = "wtclientrpc")]
+pub mod wtclientrpc {
+    tonic::include_proto!("wtclientrpc");
 }
 
 /// Supplies requests with macaroon
@@ -221,7 +302,6 @@ async fn load_macaroon(
 ///
 /// If you have a motivating use case for use of direct data feel free to open an issue and
 /// explain.
-#[cfg_attr(feature = "tracing", tracing::instrument(name = "Connecting to LND"))]
 pub async fn connect<CP, MP>(
     address: String,
     cert_file: CP,
@@ -249,6 +329,23 @@ where
         })?;
 
     let client = Client {
+        #[cfg(feature = "autopilotrpc")]
+        autopilot: autopilotrpc::autopilot_client::AutopilotClient::with_origin(
+            svc.clone(),
+            uri.clone(),
+        ),
+        #[cfg(feature = "chainrpc")]
+        chain_kit: chainrpc::chain_kit_client::ChainKitClient::with_origin(
+            svc.clone(),
+            uri.clone(),
+        ),
+        #[cfg(feature = "chainrpc")]
+        chain_notifier: chainrpc::chain_notifier_client::ChainNotifierClient::with_origin(
+            svc.clone(),
+            uri.clone(),
+        ),
+        #[cfg(feature = "devrpc")]
+        dev: devrpc::dev_client::DevClient::with_origin(svc.clone(), uri.clone()),
         #[cfg(feature = "lightningrpc")]
         lightning: lnrpc::lightning_client::LightningClient::with_origin(svc.clone(), uri.clone()),
         #[cfg(feature = "walletrpc")]
@@ -269,8 +366,16 @@ where
             svc.clone(),
             uri.clone(),
         ),
-        #[cfg(feature = "staterpc")]
-        state: staterpc::state_client::StateClient::with_origin(svc.clone(), uri.clone()),
+        #[cfg(feature = "watchtowerrpc")]
+        watchtower: watchtowerrpc::watchtower_client::WatchtowerClient::with_origin(
+            svc.clone(),
+            uri.clone(),
+        ),
+        #[cfg(feature = "wtclientrpc")]
+        wtclient: wtclientrpc::watchtower_client_client::WatchtowerClientClient::with_origin(
+            svc.clone(),
+            uri.clone(),
+        ),
     };
     Ok(client)
 }
