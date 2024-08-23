@@ -15,14 +15,23 @@ fn main() -> std::io::Result<()> {
     println!("cargo:rerun-if-changed={}", lnd_rpc_proto_file.display());
 
     let protos = [
-        "signrpc/signer.proto",
-        "walletrpc/walletkit.proto",
-        "lightning.proto",
-        "peersrpc/peers.proto",
-        "verrpc/verrpc.proto",
-        "routerrpc/router.proto",
+        "autopilotrpc/autopilot.proto",
+        "chainrpc/chainkit.proto",
+        "chainrpc/chainnotifier.proto",
+        "devrpc/dev.proto",
         "invoicesrpc/invoices.proto",
-        "staterpc/state.proto",
+        "lightning.proto",
+        "lnclipb/lncli.proto",
+        "neutrinorpc/neutrino.proto",
+        "peersrpc/peers.proto",
+        "routerrpc/router.proto",
+        "signrpc/signer.proto",
+        "stateservice.proto",
+        "verrpc/verrpc.proto",
+        "walletrpc/walletkit.proto",
+        "walletunlocker.proto",
+        "watchtowerrpc/watchtower.proto",
+        "wtclientrpc/wtclient.proto",
     ];
 
     let proto_paths: Vec<_> = protos.iter().map(|proto| dir.join(proto)).collect();
